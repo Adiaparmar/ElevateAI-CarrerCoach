@@ -151,7 +151,13 @@ export default function Home() {
               Get started with AI-driven career insights and tools
             </p>
             <Link href="/dashboard" passhref>
-              <Button size="lg" variant="secondary" className="h-11 mt-5 animate-bounce">Start Your Journey Today <ArrowRight className="w-4 h-4 ml-2"/></Button>
+              <Button
+                size="lg"
+                variant="secondary"
+                className="h-11 mt-5 animate-bounce"
+              >
+                Start Your Journey Today <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
             </Link>
           </div>
         </div>
