@@ -150,7 +150,7 @@ export default function Home() {
             <p className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl">
               Get started with AI-driven career insights and tools
             </p>
-            <Link href="/dashboard" passhref>
+            <Link href="/dashboard">
               <Button
                 size="lg"
                 variant="secondary"
