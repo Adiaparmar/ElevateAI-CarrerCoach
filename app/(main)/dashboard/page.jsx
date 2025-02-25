@@ -8,7 +8,7 @@ const IndustryInsightsPage = async () => {
   if (!isOnboarded) {
     redirect("/onboarding");
   }
-  return <div></div>;
+  return <div>Industry Insights page</div>;
 };
 
 export default IndustryInsightsPage;
