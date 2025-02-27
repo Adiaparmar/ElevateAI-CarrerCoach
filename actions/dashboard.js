@@ -38,28 +38,76 @@ export const generateAIInsights = async (industry) => {
   return JSON.parse(cleanedText);
 };
 
+// export async function getIndustryInsights() {
+//   const { userId } = await auth();
+
+//   const user = await db.user.findUnique({
+//     where: {
+//       clerkUserId: userId,
+//     },
+//     include: {
+//       industryInsights: true,
+//     },
+//   });
+
+//   if (!user) throw new Error("User not found");
+//   let industryInsight = user.industryInsights;
+//   if (!user.industryInsight) {
+//     const insights = await generateAIInsights(user.industry);
+
+//     const industryInsight = await db.industryInsight.create({
+//       data: {
+//         industry: user.industry,
+//         ...insights,
+//         nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+//       },
+//     });
+//     return industryInsight;
+//   }
+//   return user.industryInsight;
+// }
+
 export async function getIndustryInsights() {
   const { userId } = await auth();
 
   const user = await db.user.findUnique({
-    where: {
-      clerkUserId: userId,
-    },
+    where: { clerkUserId: userId },
+    include: { industryInsights: true }, // Correct relation name from schema
   });
 
   if (!user) throw new Error("User not found");
 
-  if (!user.industryInsight) {
-    const insights = await generateAIInsights(user.industry);
+  // Check if user has an industry set
+  if (!user.industry) throw new Error("User industry not specified");
 
-    const industryInsight = await db.industryInsight.create({
-      data: {
-        industry: user.industry,
-        ...insights,
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
+  let industryInsight = user.industryInsights; // This is the related IndustryInsight (if any)
+
+  if (!industryInsight) {
+    // Look for an existing IndustryInsight for this industry
+    industryInsight = await db.industryInsight.findUnique({
+      where: { industry: user.industry },
     });
-    return industryInsight;
+
+    if (!industryInsight) {
+      // If none exists, generate and create a new one
+      const insights = await generateAIInsights(user.industry);
+      industryInsight = await db.industryInsight.create({
+        data: {
+          industry: user.industry,
+          salaryRanges: insights.salaryRanges,
+          growthRate: insights.growthRate,
+          demandLevel: insights.demandLevel,
+          topSkills: insights.topSkills,
+          marketOutlook: insights.marketOutlook,
+          keyTrends: insights.keyTrends,
+          recommendationSkills: insights.recommendationSkills, // Fixed typo from "recommendationSkills"
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
+        },
+      });
+    }
+
+    // Note: No need to update the user here since the relation is via the `industry` field matching
   }
-  return user.industryInsight;
+
+  return industryInsight;
 }
