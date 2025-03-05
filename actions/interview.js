@@ -74,13 +74,13 @@ export async function saveQuizResult(questions, answers, score) {
 
   if (!user) throw new Error("User not found");
 
-  const questionResults = questions.map((q, index) => {
-    question: q.question;
-    answer: q.correctAnswer;
-    userAnswer: answers[index];
-    isCorrect: q.correctAnswer === answers[index];
-    explanation: q.explanation;
-  });
+  const questionResults = questions.map((q, index) => ({
+    question: q.question,
+    answer: q.correctAnswer,
+    userAnswer: answers[index],
+    isCorrect: q.correctAnswer === answers[index],
+    explanation: q.explanation,
+  }));
 
   const wrongAnswers = questionResults.filter((q) => !q.isCorrect);
   let improvementTip = null;
