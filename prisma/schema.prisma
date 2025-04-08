@@ -32,6 +32,7 @@ model User{
   assessments      Assessment[]
   resume           Resume?
   coverLetter      CoverLetter[]
+  careerPaths      CareerPath[]
 }
 
 model Assessment{
@@ -89,6 +90,16 @@ model IndustryInsight{
 
   @@index([industry])
 }
+
+model CareerPath {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  goal      String
+  path      Json
+  createdAt DateTime @default(now())
+}
+
 
 enum DemandLevel {
   HIGH
