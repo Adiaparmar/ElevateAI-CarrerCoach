@@ -26,8 +26,8 @@ export default function RootLayout({ children }) {
         <body className={`${inter.className}`}>
           <ThemeProvider
             attribute="class"
-            deaultTheme="dark"
-            enableSystem
+            defaultTheme="dark"
+            enableSystem={false}
             disableTransitionOnChange
           >
             {/* header */}
