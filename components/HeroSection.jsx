@@ -17,7 +17,8 @@ const HeroSection = () => {
       if (scrollPosition > scrollThreshold) {
         imageElement.classList.add("scrolled");
       } else {
-        imageElement.classList.remove("scrolled");S
+        imageElement.classList.remove("scrolled");
+        S;
       }
     };
     window.addEventListener("scroll", handleScroll);
@@ -29,7 +30,7 @@ const HeroSection = () => {
       <div className="space-y-8 text-center">
         <div className="space-y-8 mx-auto">
           <h1 className="text-5xl font-bold md:text-6xl lg:text-7xl xl:text-8xl gradient-title">
-            Elevate Your Carrer with
+            Elevate Your Career with
             <br />
             AI Expertise
           </h1>
