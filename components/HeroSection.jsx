@@ -18,7 +18,6 @@ const HeroSection = () => {
         imageElement.classList.add("scrolled");
       } else {
         imageElement.classList.remove("scrolled");
-        S;
       }
     };
     window.addEventListener("scroll", handleScroll);

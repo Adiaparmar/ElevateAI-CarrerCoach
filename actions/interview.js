@@ -2,11 +2,10 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 export async function generateQuiz() {
@@ -48,9 +47,11 @@ export async function generateQuiz() {
             }
             `;
 
-    const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
+    const result = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite-preview",
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+    const text = result.text;
 
     const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
     const quiz = JSON.parse(cleanedText);
@@ -104,9 +105,11 @@ export async function saveQuizResult(questions, answers, score) {
     Dont explicitly mention the mistaked, instead focus on what to learn and practice`;
 
     try {
-      const result = await model.generateContent(improvementPrompt);
-      const response = result.response;
-      improvementTip = response.text().trim();
+      const result = await ai.models.generateContent({
+        model: "gemini-3.1-flash-lite-preview",
+        contents: [{ role: "user", parts: [{ text: improvementPrompt }] }],
+      });
+      improvementTip = result.text.trim();
     } catch (error) {
       console.error("Error generating improvement tip:", error);
     }

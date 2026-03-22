@@ -2,11 +2,10 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-2.0-flash",
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 export const generateAIInsights = async (industry) => {
@@ -30,12 +29,20 @@ export const generateAIInsights = async (industry) => {
       Include at least 5 skills and trends
   `;
 
-  const result = await model.generateContent(prompt);
-  const response = result.response;
-  const text = response.text();
+  const result = await ai.models.generateContent({
+    model: "gemini-3.1-flash-lite-preview",
+    contents: [{ role: "user", parts: [{ text: prompt }] }],
+  });
+  const text = result.text;
 
   const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
-  return JSON.parse(cleanedText);
+  const insights = JSON.parse(cleanedText);
+
+  return {
+    ...insights,
+    demandLevel: insights.demandLevel?.toUpperCase(),
+    marketOutlook: insights.marketOutlook?.toUpperCase(),
+  };
 };
 
 // export async function getIndustryInsights() {

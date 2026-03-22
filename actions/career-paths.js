@@ -2,10 +2,11 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 export async function generateCareerPaths(data) {
   console.log("Generating career paths with data:", data);
@@ -66,10 +67,13 @@ export async function generateCareerPaths(data) {
   `;
 
   try {
-    const result = await model.generateContent(prompt);
-    const content = result.response.text().trim();
+    const result = await ai.models.generateContent({
+      model: "gemini-3.1-flash-lite-preview",
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+    });
+    const content = result.text.trim();
 
-    const jsonText = content.replace(/```json|```/g, "").trim();
+    const jsonText = content.replace(/```(?:json)?\n?/g, "").trim();
     const parsed = JSON.parse(jsonText);
 
     const newPath = await db.careerPath.create({
